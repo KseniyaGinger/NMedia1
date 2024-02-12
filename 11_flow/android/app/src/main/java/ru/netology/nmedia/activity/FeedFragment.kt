@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.snackbar.Snackbar
 import ru.netology.nmedia.R
@@ -27,6 +28,8 @@ class FeedFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         val binding = FragmentFeedBinding.inflate(inflater, container, false)
+
+        var newPostCount = 0
 
         val adapter = PostsAdapter(object : OnInteractionListener {
             override fun onEdit(post: Post) {
@@ -67,10 +70,21 @@ class FeedFragment : Fragment() {
             adapter.submitList(state.posts)
             binding.emptyText.isVisible = state.empty
         }
-        viewModel.newerCount.observe(viewLifecycleOwner) { state ->
-            // TODO: just log it, interaction must be in homework
-            println(state)
+
+        lifecycleScope.launchWhenStarted {
+            viewModel.newerCount.observe(viewLifecycleOwner) { state ->
+                println("Newer count:" + state)
+                if (state > 0) {
+                    newPostCount += 1
+                    binding.plashka.visibility = View.VISIBLE
+                    binding.plashka.text = "$newPostCount" + " " + getString(R.string.new_posts)
+                } else {
+                    binding.plashka.visibility = View.GONE
+                }
+            }
         }
+
+
 
         binding.swiperefresh.setOnRefreshListener {
             viewModel.refreshPosts()
@@ -78,6 +92,12 @@ class FeedFragment : Fragment() {
 
         binding.fab.setOnClickListener {
             findNavController().navigate(R.id.action_feedFragment_to_newPostFragment)
+        }
+
+        binding.plashka.setOnClickListener {
+            binding.plashka.visibility = View.VISIBLE
+            viewModel.refreshPosts()
+            binding.list.smoothScrollToPosition(0)
         }
 
         return binding.root

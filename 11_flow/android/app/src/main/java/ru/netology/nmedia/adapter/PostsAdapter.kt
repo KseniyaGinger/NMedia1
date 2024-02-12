@@ -74,6 +74,7 @@ class PostViewHolder(
             share.setOnClickListener {
                 onInteractionListener.onShare(post)
             }
+
         }
     }
 }

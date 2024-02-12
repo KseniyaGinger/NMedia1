@@ -18,6 +18,9 @@ interface PostDao {
     @Query("SELECT COUNT(*) FROM PostEntity")
     suspend fun count(): Int
 
+    @Query("SELECT * FROM PostEntity WHERE hidden = 0 ORDER BY id DESC")
+    fun getAllVisible(): Flow<List<PostEntity>>
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(post: PostEntity)
 
