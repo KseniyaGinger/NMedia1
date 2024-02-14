@@ -10,6 +10,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.snackbar.Snackbar
 import ru.netology.nmedia.R
 import ru.netology.nmedia.adapter.OnInteractionListener
@@ -28,8 +29,6 @@ class FeedFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         val binding = FragmentFeedBinding.inflate(inflater, container, false)
-
-        var newPostCount = 0
 
         val adapter = PostsAdapter(object : OnInteractionListener {
             override fun onEdit(post: Post) {
@@ -56,6 +55,16 @@ class FeedFragment : Fragment() {
                 startActivity(shareIntent)
             }
         })
+
+        /*   val insertToTopListener = object : RecyclerView.AdapterDataObserver() {
+               override fun onItemRangeInserted(positionStart: Int, itemCount: Int) {
+                   if (positionStart == 0) {
+                       binding.list.smoothScrollToPosition(0)
+                       adapter.unregisterAdapterDataObserver(this)
+                   }
+               }
+           } */
+
         binding.list.adapter = adapter
         viewModel.dataState.observe(viewLifecycleOwner) { state ->
             binding.progress.isVisible = state.loading
@@ -71,19 +80,16 @@ class FeedFragment : Fragment() {
             binding.emptyText.isVisible = state.empty
         }
 
-        lifecycleScope.launchWhenStarted {
-            viewModel.newerCount.observe(viewLifecycleOwner) { state ->
-                println("Newer count:" + state)
-                if (state > 0) {
-                    newPostCount += 1
-                    binding.plashka.visibility = View.VISIBLE
-                    binding.plashka.text = "$newPostCount" + " " + getString(R.string.new_posts)
-                } else {
-                    binding.plashka.visibility = View.GONE
-                }
+
+        viewModel.newerCount.observe(viewLifecycleOwner) { state ->
+            if (state > 0) {
+                binding.plashka.visibility = View.VISIBLE
+                binding.plashka.text =
+                    getString(R.string.new_posts) + " " + "(" + state.toString() + ")"
+            } else {
+                binding.plashka.visibility = View.GONE
             }
         }
-
 
 
         binding.swiperefresh.setOnRefreshListener {
@@ -95,9 +101,9 @@ class FeedFragment : Fragment() {
         }
 
         binding.plashka.setOnClickListener {
-            binding.plashka.visibility = View.VISIBLE
-            viewModel.refreshPosts()
+            binding.plashka.visibility = View.GONE
             binding.list.smoothScrollToPosition(0)
+            // adapter.registerAdapterDataObserver(insertToTopListener)
         }
 
         return binding.root

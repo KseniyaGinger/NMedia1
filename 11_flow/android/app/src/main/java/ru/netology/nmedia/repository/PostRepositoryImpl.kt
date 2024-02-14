@@ -46,8 +46,9 @@ class PostRepositoryImpl(private val dao: PostDao) : PostRepository {
             }
 
             val body = response.body() ?: throw ApiError(response.code(), response.message())
-            dao.insert(body.toEntity())
-            emit(body.size)
+            val hiddenBody = body.map { it.copy(hidden = true) }
+            dao.insert(hiddenBody.toEntity())
+            emit(dao.getAllHidden())
         }
     }
         .catch { e -> throw AppError.from(e) }

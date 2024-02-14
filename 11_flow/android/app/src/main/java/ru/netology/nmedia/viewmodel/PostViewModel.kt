@@ -31,18 +31,25 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
         PostRepositoryImpl(AppDb.getInstance(context = application).postDao())
 
     val data: LiveData<FeedModel> = repository.data
+        .map { posts ->
+            posts.filter { !it.hidden }
+        }
         .map(::FeedModel)
+        .catch { it.printStackTrace() }
         .asLiveData(Dispatchers.Default)
+
+    val newerCount = repository.data.asLiveData()
+        .switchMap {
+            repository.getNewerCount(it.firstOrNull()?.id ?: 0L).catch {
+                _dataState.postValue(
+                    FeedModelState(error = true)
+                )
+            }.asLiveData(Dispatchers.Default, 100)
+        }
 
     private val _dataState = MutableLiveData<FeedModelState>()
     val dataState: LiveData<FeedModelState>
         get() = _dataState
-
-    val newerCount: LiveData<Int> = data.switchMap {
-        repository.getNewerCount(it.posts.firstOrNull()?.id ?: 0L)
-            .catch { e -> e.printStackTrace() }
-            .asLiveData(Dispatchers.Default)
-    }
 
     private val edited = MutableLiveData(empty)
     private val _postCreated = SingleLiveEvent<Unit>()
