@@ -132,4 +132,7 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
 
     }
 
+    fun updateHidden() {
+        viewModelScope.launch { repository.updateHidden() }
+    }
 }

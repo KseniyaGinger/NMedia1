@@ -93,7 +93,7 @@ class FeedFragment : Fragment() {
         binding.plashka.setOnClickListener {
             binding.plashka.visibility = View.GONE
             binding.list.smoothScrollToPosition(0)
-            viewModel.newerCount
+            viewModel.updateHidden()
         }
 
         return binding.root
