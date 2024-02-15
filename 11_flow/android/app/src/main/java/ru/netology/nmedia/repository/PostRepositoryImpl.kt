@@ -49,6 +49,7 @@ class PostRepositoryImpl(private val dao: PostDao) : PostRepository {
             val hiddenBody = body.map { it.copy(hidden = true) }
             dao.insert(hiddenBody.toEntity())
             emit(dao.getAllHidden())
+            dao.updateHidden()
         }
     }
         .catch { e -> throw AppError.from(e) }
@@ -93,5 +94,10 @@ class PostRepositoryImpl(private val dao: PostDao) : PostRepository {
         val post = PostEntity.fromDto(body)
         dao.insert(post)
     }
+
+   /* override suspend fun updateHidden () {
+        dao.updateHidden()
+    } */
+
 }
 

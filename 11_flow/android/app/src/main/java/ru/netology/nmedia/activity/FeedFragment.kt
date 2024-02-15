@@ -8,13 +8,12 @@ import android.view.ViewGroup
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
-import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.snackbar.Snackbar
 import ru.netology.nmedia.R
 import ru.netology.nmedia.adapter.OnInteractionListener
 import ru.netology.nmedia.adapter.PostsAdapter
+import ru.netology.nmedia.dao.PostDao
 import ru.netology.nmedia.databinding.FragmentFeedBinding
 import ru.netology.nmedia.dto.Post
 import ru.netology.nmedia.viewmodel.PostViewModel
@@ -56,14 +55,6 @@ class FeedFragment : Fragment() {
             }
         })
 
-        /*   val insertToTopListener = object : RecyclerView.AdapterDataObserver() {
-               override fun onItemRangeInserted(positionStart: Int, itemCount: Int) {
-                   if (positionStart == 0) {
-                       binding.list.smoothScrollToPosition(0)
-                       adapter.unregisterAdapterDataObserver(this)
-                   }
-               }
-           } */
 
         binding.list.adapter = adapter
         viewModel.dataState.observe(viewLifecycleOwner) { state ->
@@ -91,7 +82,6 @@ class FeedFragment : Fragment() {
             }
         }
 
-
         binding.swiperefresh.setOnRefreshListener {
             viewModel.refreshPosts()
         }
@@ -103,7 +93,7 @@ class FeedFragment : Fragment() {
         binding.plashka.setOnClickListener {
             binding.plashka.visibility = View.GONE
             binding.list.smoothScrollToPosition(0)
-            // adapter.registerAdapterDataObserver(insertToTopListener)
+            viewModel.newerCount
         }
 
         return binding.root
