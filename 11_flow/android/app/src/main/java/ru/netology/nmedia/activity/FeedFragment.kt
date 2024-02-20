@@ -13,7 +13,6 @@ import com.google.android.material.snackbar.Snackbar
 import ru.netology.nmedia.R
 import ru.netology.nmedia.adapter.OnInteractionListener
 import ru.netology.nmedia.adapter.PostsAdapter
-import ru.netology.nmedia.dao.PostDao
 import ru.netology.nmedia.databinding.FragmentFeedBinding
 import ru.netology.nmedia.dto.Post
 import ru.netology.nmedia.viewmodel.PostViewModel
@@ -99,3 +98,7 @@ class FeedFragment : Fragment() {
         return binding.root
     }
 }
+
+private operator fun Any.compareTo(i: Int): Int {TODO()}
+
+
