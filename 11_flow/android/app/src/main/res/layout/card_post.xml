@@ -51,6 +51,18 @@
             app:layout_constraintTop_toBottomOf="@id/author"
             tools:text="@sample/posts.json/data/published" />
 
+        <ImageView
+            android:id="@+id/attach"
+            android:layout_width="match_parent"
+            android:layout_height="275dp"
+            android:layout_marginBottom="@dimen/common_spacing"
+            android:layout_marginTop="@dimen/common_spacing"
+            android:contentDescription="@string/description_post_author_avatar"
+            app:layout_constraintBottom_toBottomOf="@id/footer"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/content"
+            tools:srcCompat="@sample/posts.json/data/authorAvatar" />
+
         <com.google.android.material.button.MaterialButton
             android:id="@+id/menu"
             android:layout_width="wrap_content"

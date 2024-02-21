@@ -7,50 +7,54 @@
     tools:context=".activity.NewPostFragment">
 
     <ScrollView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-
-    <LinearLayout
-        android:id="@+id/linearLayout"
-        android:layout_width="match_parent"
+        android:id="@+id/scrollView2"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:paddingBottom="?attr/actionBarSize">
+        app:layout_constraintBottom_toBottomOf="@+id/bottomAppBar"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
 
-        <EditText
-            android:id="@+id/edit"
+        <LinearLayout
+            android:id="@+id/linearLayout"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="@android:color/transparent"
-            android:gravity="start|top"
-            android:importantForAutofill="no"
-            android:inputType="textMultiLine"
-            android:padding="@dimen/common_spacing"
-            tools:ignore="LabelFor"
-            tools:text="@tools:sample/lorem[300]" />
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingBottom="?attr/actionBarSize">
 
-        <FrameLayout
-            android:id="@+id/previewContainer"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-
-            <ImageView
-                android:id="@+id/preview"
+            <EditText
+                android:id="@+id/edit"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                android:adjustViewBounds="true"
-                android:contentDescription="@string/description_photo"
-                tools:srcCompat="@tools:sample/avatars[6]" />
+                android:layout_height="match_parent"
+                android:background="@android:color/transparent"
+                android:gravity="start|top"
+                android:importantForAutofill="no"
+                android:inputType="textMultiLine"
+                android:padding="@dimen/common_spacing"
+                tools:ignore="LabelFor"
+                tools:text="@tools:sample/lorem[300]" />
 
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/clear"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal|bottom"
-                android:text="@string/clear" />
-        </FrameLayout>
-    </LinearLayout>
+            <FrameLayout
+                android:id="@+id/previewContainer"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <ImageView
+                    android:id="@+id/preview"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:adjustViewBounds="true"
+                    android:contentDescription="@string/description_photo"
+                    tools:srcCompat="@tools:sample/avatars[6]" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/clear"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal|bottom"
+                    android:text="@string/clear" />
+            </FrameLayout>
+        </LinearLayout>
     </ScrollView>
 
 
@@ -58,11 +62,11 @@
         android:id="@+id/bottomAppBar"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:background="@color/divider_color"
         android:orientation="horizontal"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        android:background="@color/divider_color">
+        app:layout_constraintStart_toStartOf="parent">
 
         <Button
             android:id="@+id/gallery"

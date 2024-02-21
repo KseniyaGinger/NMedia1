@@ -11,6 +11,7 @@ import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.snackbar.Snackbar
 import ru.netology.nmedia.R
+import ru.netology.nmedia.activity.FragmentPicture.Companion.textArg
 import ru.netology.nmedia.adapter.OnInteractionListener
 import ru.netology.nmedia.adapter.PostsAdapter
 import ru.netology.nmedia.databinding.FragmentFeedBinding
@@ -52,8 +53,13 @@ class FeedFragment : Fragment() {
                     Intent.createChooser(intent, getString(R.string.chooser_share_post))
                 startActivity(shareIntent)
             }
-        })
 
+            override fun picture(post: Post) {
+                findNavController().navigate(R.id.action_feedFragment_to_fragmentPicture,  Bundle().apply {
+                    textArg = post.attachment?.url
+                })
+            }
+        })
 
         binding.list.adapter = adapter
         viewModel.dataState.observe(viewLifecycleOwner) { state ->
@@ -72,7 +78,8 @@ class FeedFragment : Fragment() {
 
 
         viewModel.newerCount.observe(viewLifecycleOwner) { state ->
-            if (state > 0) {
+            val count = state as? Int ?: 0
+            if (count > 0) {
                 binding.plashka.visibility = View.VISIBLE
                 binding.plashka.text =
                     getString(R.string.new_posts) + " " + "(" + state.toString() + ")"
@@ -99,6 +106,5 @@ class FeedFragment : Fragment() {
     }
 }
 
-private operator fun Any.compareTo(i: Int): Int {TODO()}
 
 
