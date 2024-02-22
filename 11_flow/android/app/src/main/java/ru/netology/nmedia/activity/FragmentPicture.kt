@@ -33,6 +33,7 @@ class FragmentPicture : Fragment() {
         // val binding = FragmentPictureBinding.inflate(inflater, container, false)
 
         binding = FragmentPictureBinding.inflate(layoutInflater)
+
         val url = arguments?.textArg ?: ""
 
             Glide.with(this)

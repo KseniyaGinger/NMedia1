@@ -24,7 +24,8 @@ private val empty = Post(
     published = "",
     likedByMe = false,
     likes = 0,
-    hidden = false
+    hidden = false,
+    attachment = null
 )
 
 
