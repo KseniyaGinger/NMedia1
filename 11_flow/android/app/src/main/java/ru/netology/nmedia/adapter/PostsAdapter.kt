@@ -87,9 +87,9 @@ class PostViewHolder(
             }
 
             binding.attach.isVisible = post.attachment != null
-            Glide.with(attach)
-                .load(post.attachment?.url)
-                .into(attach)
+            Glide.with(binding.root)
+                .load("http://10.0.2.2:9999/images/${post.attachment?.url}")
+                .into(binding.attach)
         }
 
     }
