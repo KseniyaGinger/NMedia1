@@ -34,5 +34,10 @@
         <action
             android:id="@+id/action_fragmentPicture_self"
             app:destination="@id/fragmentPicture" />
+
+        <action
+            android:id="@+id/action_fragmentPicture_to_feedFragment"
+            app:destination="@+id/feedFragment"
+            />
     </fragment>
 </navigation>

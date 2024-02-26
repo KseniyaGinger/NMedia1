@@ -6,6 +6,8 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.navigation.findNavController
+import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
 import ru.netology.nmedia.BuildConfig
 import ru.netology.nmedia.R
@@ -30,7 +32,6 @@ class FragmentPicture : Fragment() {
         savedInstanceState: Bundle?
     ): View {
 
-        // val binding = FragmentPictureBinding.inflate(inflater, container, false)
 
         binding = FragmentPictureBinding.inflate(layoutInflater)
 
@@ -41,6 +42,10 @@ class FragmentPicture : Fragment() {
                 .into(binding.picture)
 
         binding.picture.load("${BuildConfig.BASE_URL}/media/${url}")
+
+        binding.fabCancel.setOnClickListener {
+            findNavController().navigate(R.id.action_fragmentPicture_to_feedFragment)
+        }
 
         return binding.root
     }

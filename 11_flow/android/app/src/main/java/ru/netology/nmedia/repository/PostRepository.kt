@@ -15,7 +15,5 @@ interface PostRepository {
     suspend fun likeById(id: Long)
 
     suspend fun updateHidden()
-
-
 }
 
