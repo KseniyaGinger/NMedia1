@@ -9,7 +9,7 @@ import ru.netology.nmedia.model.PhotoModel
 interface PostRepository {
     val data: Flow<List<Post>>
     suspend fun getAll()
-    fun getNewerCount(id: Long): Flow<Flow<List<PostEntity>>>
+    fun getNewerCount(id: Long): Flow<Int>
     suspend fun save(post: Post, photo: PhotoModel?)
     suspend fun removeById(id: Long)
     suspend fun likeById(id: Long)

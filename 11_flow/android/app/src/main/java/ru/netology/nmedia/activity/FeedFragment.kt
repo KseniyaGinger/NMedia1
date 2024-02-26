@@ -78,8 +78,7 @@ class FeedFragment : Fragment() {
 
 
         viewModel.newerCount.observe(viewLifecycleOwner) { state ->
-            val count = state as? Int ?: 0
-            if (count > 0) {
+            if (state > 0) {
                 binding.plashka.visibility = View.VISIBLE
                 binding.plashka.text =
                     getString(R.string.new_posts) + " " + "(" + state.toString() + ")"

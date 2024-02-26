@@ -44,7 +44,7 @@ class PostRepositoryImpl(private val dao: PostDao) : PostRepository {
         }
     }
 
-    override fun getNewerCount(id: Long): Flow<Flow<List<PostEntity>>> = flow {
+    override fun getNewerCount(id: Long): Flow<Int> = flow {
         while (true) {
             delay(10_000L)
             val response = PostsApi.service.getNewer(id)
@@ -55,11 +55,12 @@ class PostRepositoryImpl(private val dao: PostDao) : PostRepository {
             val body = response.body() ?: throw ApiError(response.code(), response.message())
             val hiddenBody = body.map { it.copy(hidden = true) }
             dao.insert(hiddenBody.toEntity())
-            emit(dao.getAll())
+            emit(body.size)
         }
     }
         .catch { e -> throw AppError.from(e) }
         .flowOn(Dispatchers.Default)
+
 
     override suspend fun save(post: Post, photo: PhotoModel?) {
         val postWithAttachment = if (photo != null) {
