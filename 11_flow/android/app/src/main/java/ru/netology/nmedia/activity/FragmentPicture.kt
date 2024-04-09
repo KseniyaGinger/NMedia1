@@ -39,6 +39,7 @@ class FragmentPicture : Fragment() {
 
             Glide.with(this)
                 .load(url)
+                .timeout(10_000)
                 .into(binding.picture)
 
         binding.picture.load("${BuildConfig.BASE_URL}/media/${url}")

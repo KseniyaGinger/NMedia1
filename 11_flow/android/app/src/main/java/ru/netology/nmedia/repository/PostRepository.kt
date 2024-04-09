@@ -1,6 +1,7 @@
 package ru.netology.nmedia.repository
 
 import kotlinx.coroutines.flow.Flow
+import ru.netology.nmedia.auth.AuthState
 import ru.netology.nmedia.dto.Media
 import ru.netology.nmedia.dto.Post
 import ru.netology.nmedia.entity.PostEntity
@@ -15,5 +16,7 @@ interface PostRepository {
     suspend fun likeById(id: Long)
 
     suspend fun updateHidden()
+
+    suspend fun authenticate(login: String, password: String) : AuthState
 }
 

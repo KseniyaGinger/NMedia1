@@ -27,4 +27,9 @@
     <string name="description_photo">description photo</string>
     <string name="remove">remove</string>
     <string name="clear">clear</string>
+    <string name="sign_in">sign in</string>
+    <string name="sign_up">sign up</string>
+    <string name="sign_out">sign out</string>
+    <string name="hint_author_name">author name</string>
+    <string name="hint_password">password</string>
 </resources>

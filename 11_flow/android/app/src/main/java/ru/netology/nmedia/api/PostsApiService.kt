@@ -9,6 +9,8 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.*
 import ru.netology.nmedia.BuildConfig
+import ru.netology.nmedia.auth.AppAuth
+import ru.netology.nmedia.auth.AuthState
 import ru.netology.nmedia.dto.Media
 import ru.netology.nmedia.dto.Post
 
@@ -21,6 +23,15 @@ private val logging = HttpLoggingInterceptor().apply {
 }
 
 private val okhttp = OkHttpClient.Builder()
+    .addInterceptor { chain ->
+        AppAuth.getInstance().authState.value.token?.let { token ->
+            val newRequest = chain.request().newBuilder()
+                .addHeader("Authorization", token)
+                .build()
+            return@addInterceptor chain.proceed(newRequest)
+        }
+        chain.proceed(chain.request())
+    }
     .addInterceptor(logging)
     .build()
 
@@ -55,6 +66,22 @@ interface PostsApiService {
     @Multipart
     @POST("media")
     suspend fun upload(@Part media: MultipartBody.Part): Media
+
+    @FormUrlEncoded
+    @POST("users/registration")
+    suspend fun registerUser(
+        @Field("login") login: String,
+        @Field("pass") pass: String,
+        @Field("name") name: String
+    ): Response<AuthState>
+
+    @FormUrlEncoded
+    @POST("users/authentication")
+    suspend fun authenticate(
+        @Field("login") login: String,
+        @Field("pass") password: String
+    ): Response<AuthState>
+
 }
 
 object PostsApi {

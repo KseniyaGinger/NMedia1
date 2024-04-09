@@ -7,6 +7,7 @@ import kotlinx.coroutines.flow.*
 import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.asRequestBody
 import ru.netology.nmedia.api.*
+import ru.netology.nmedia.auth.AuthState
 import ru.netology.nmedia.dao.PostDao
 import ru.netology.nmedia.dto.Attachment
 import ru.netology.nmedia.dto.AttachmentType
@@ -120,6 +121,25 @@ class PostRepositoryImpl(private val dao: PostDao) : PostRepository {
 
    override suspend fun updateHidden() {
         dao.updateHidden()
+    }
+
+    override suspend fun authenticate(login: String, password: String): AuthState {
+        try {
+            val response = PostsApi.service.authenticate(login,password)
+            if (!response.isSuccessful) {
+                throw ApiError(response.code(), response.message())
+            }
+            val body: AuthState = response.body() ?: throw ApiError(response.code(), response.message())
+
+            return AuthState(body.id, body.token)
+
+        } catch (e: IOException) {
+            throw NetworkError
+        } catch (e: Exception) {
+            throw UnknownError
+        } catch (e: ApiError) {
+            throw e
+        }
     }
 
 }

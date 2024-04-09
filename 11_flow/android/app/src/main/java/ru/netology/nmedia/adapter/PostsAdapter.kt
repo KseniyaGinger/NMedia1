@@ -54,6 +54,7 @@ class PostViewHolder(
             like.text = "${post.likes}"
 
 
+            menu.isVisible = post.ownedByMe
             menu.setOnClickListener {
                 PopupMenu(it.context, it).apply {
                     inflate(R.menu.options_post)
