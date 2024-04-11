@@ -121,7 +121,7 @@ class PostRepositoryImpl(private val dao: PostDao) : PostRepository {
 
    override suspend fun updateHidden() {
         dao.updateHidden()
-    }
+   }
 
     override suspend fun authenticate(login: String, password: String): AuthState {
         try {
