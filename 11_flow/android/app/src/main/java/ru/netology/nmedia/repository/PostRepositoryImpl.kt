@@ -135,10 +135,10 @@ class PostRepositoryImpl(private val dao: PostDao) : PostRepository {
 
         } catch (e: IOException) {
             throw NetworkError
-        } catch (e: Exception) {
-            throw UnknownError
         } catch (e: ApiError) {
             throw e
+        } catch (e: Exception) {
+            throw UnknownError
         }
     }
 

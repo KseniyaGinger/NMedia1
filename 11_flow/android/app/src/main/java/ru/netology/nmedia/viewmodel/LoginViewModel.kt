@@ -7,11 +7,12 @@ import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
 import ru.netology.nmedia.auth.AppAuth
 import ru.netology.nmedia.db.AppDb
+import ru.netology.nmedia.error.ApiError
 import ru.netology.nmedia.error.NetworkError
 import ru.netology.nmedia.repository.PostRepository
 import ru.netology.nmedia.repository.PostRepositoryImpl
 
-class LoginViewModel(application: Application): AndroidViewModel(application) {
+class LoginViewModel(application: Application) : AndroidViewModel(application) {
 
     private val repository: PostRepository =
         PostRepositoryImpl(AppDb.getInstance(application).postDao())
@@ -24,9 +25,9 @@ class LoginViewModel(application: Application): AndroidViewModel(application) {
                 val result = repository.authenticate(login, password)
                 AppAuth.getInstance().setFlow(result)
             } catch (e: NetworkError) {
-
                 AppAuth.getInstance().setFlow(_authState.value.copy(error = e))
-
+            } catch (e: ApiError) {
+                AppAuth.getInstance().setFlow(_authState.value.copy(error = e))
             }
         }
     }
