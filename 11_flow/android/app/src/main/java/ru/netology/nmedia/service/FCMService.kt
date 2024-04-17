@@ -9,10 +9,13 @@ import android.content.pm.PackageManager
 import android.os.Build
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
+import androidx.core.content.ContextCompat.checkSelfPermission
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
 import com.google.gson.Gson
 import ru.netology.nmedia.R
+import ru.netology.nmedia.auth.AppAuth
+import ru.netology.nmedia.dto.PushContent
 import kotlin.random.Random
 
 
@@ -37,16 +40,48 @@ class FCMService : FirebaseMessagingService() {
     }
 
     override fun onMessageReceived(message: RemoteMessage) {
+        val valueIdLocal = AppAuth.getInstance().authState.value.id
+        val valueIdServer = Gson().fromJson(message.data["content"], PushContent::class.java)
 
-        message.data[action]?.let {
-           when (Action.valueOf(it)) {
-              Action.LIKE -> handleLike(gson.fromJson(message.data[content], Like::class.java))
-           }
+        if (valueIdLocal == valueIdServer.recipientId || valueIdServer.recipientId == null) {
+            val notification = createNotification(
+                this,
+                "оповещение что всё норм или не особо",
+                content
+            )
+            notify(notification)
         }
-    }
+
+        if (valueIdServer.recipientId == 0L || valueIdServer.recipientId != valueIdLocal) {
+            val notification = createNotification(
+                this,
+                "сервер считает, что у вас анонимная аутентификация и вам нужно переотправить свой push token",
+                content
+            )
+            notify(notification)
+            AppAuth.getInstance().sendPushToken()
+        }else {
+            val notification = createNotification(
+                this,
+                "на вашем устройстве другая аутентификация",
+                content
+            )
+            notify(notification)
+            AppAuth.getInstance().sendPushToken()
+        }
+
+        }
+
+
+private fun createNotification(context: Context, title: String, content: String): Notification {
+    return NotificationCompat.Builder(context, content)
+        .setContentTitle(title)
+        .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+        .build()
+}
 
     override fun onNewToken(token: String) {
-        println(token)
+        AppAuth.getInstance().sendPushToken(token)
     }
 
     private fun handleLike(content: Like) {

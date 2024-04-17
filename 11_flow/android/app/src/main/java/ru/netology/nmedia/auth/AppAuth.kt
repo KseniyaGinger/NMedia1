@@ -1,14 +1,28 @@
 package ru.netology.nmedia.auth
 
 import android.content.Context
+import com.google.firebase.messaging.FirebaseMessaging
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.tasks.await
+import ru.netology.nmedia.api.PostsApi
 import ru.netology.nmedia.db.AppDb
+import ru.netology.nmedia.dto.PushToken
 
-class AppAuth private constructor(context: Context){
+class AppAuth private constructor(context: Context) {
 
     private val prefs = context.getSharedPreferences("auth", Context.MODE_PRIVATE)
+
+    private val idKey = "id"
+    private val tokenKey = "token"
+
+    init {
+        sendPushToken()
+    }
 
     private val _authState = MutableStateFlow(
         AuthState(
@@ -26,9 +40,10 @@ class AppAuth private constructor(context: Context){
             putString(KEY_TOKEN, token)
             commit()
         }
+        sendPushToken()
     }
 
-    fun setFlow(authState:AuthState){
+    fun setFlow(authState: AuthState) {
         _authState.value = authState
         with(prefs.edit()) {
             putLong(KEY_ID, authState.id)
@@ -44,7 +59,20 @@ class AppAuth private constructor(context: Context){
             clear()
             commit()
         }
+        sendPushToken()
     }
+
+    fun sendPushToken(token: String? = null) {
+        CoroutineScope(Dispatchers.Default).launch {
+            try {
+                val tokenDto = PushToken(token ?: FirebaseMessaging.getInstance().token.await())
+                PostsApi.service.sendPushToken(tokenDto)
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
+    }
+
 
     companion object {
 
@@ -55,11 +83,12 @@ class AppAuth private constructor(context: Context){
         private var instance: AppAuth? = null
 
         fun getInstance() = synchronized(this) {
-            instance ?: throw IllegalStateException("getInstance should be called only after initAuth")
+            instance
+                ?: throw IllegalStateException("getInstance should be called only after initAuth")
         }
 
         fun initAuth(context: Context) = instance ?: synchronized(this) {
-                instance ?: AppAuth(context).also { instance = it }
+            instance ?: AppAuth(context).also { instance = it }
         }
     }
 }
