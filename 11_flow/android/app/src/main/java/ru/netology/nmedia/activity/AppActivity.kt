@@ -138,7 +138,7 @@ class AppActivity : AppCompatActivity(R.layout.activity_app) {
         }
 
         FirebaseMessaging.getInstance().token.addOnSuccessListener {
-            println(it)
+            println("Push-token: $it")
         }
     }
 }

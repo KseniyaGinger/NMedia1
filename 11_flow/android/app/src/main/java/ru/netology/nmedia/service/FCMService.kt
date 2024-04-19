@@ -74,8 +74,10 @@ class FCMService : FirebaseMessagingService() {
 
 
 private fun createNotification(context: Context, title: String, content: String): Notification {
-    return NotificationCompat.Builder(context, content)
+    return NotificationCompat.Builder(context, channelId)
+        .setSmallIcon(R.drawable.ic_notification)
         .setContentTitle(title)
+        .setContentText(content)
         .setPriority(NotificationCompat.PRIORITY_DEFAULT)
         .build()
 }
