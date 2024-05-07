@@ -91,7 +91,7 @@ class PostViewHolder(
             val urlPhoto =
                 if (post.attachment != null) "http://10.0.2.2:9999/media/${post.attachment?.url}" else "http://10.0.2.2:9999/media/58b15829-071e-4b38-bf4f-918dda27325c.jpg"
 
-            binding.attach.isVisible = post.attachment != null
+            binding.attach.isVisible = post.attachment!= null
 
                 Glide.with(binding.root)
                     .load(urlPhoto)

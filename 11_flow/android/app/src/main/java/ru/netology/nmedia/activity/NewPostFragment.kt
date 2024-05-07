@@ -1,7 +1,5 @@
 package ru.netology.nmedia.activity
 
-import android.app.Activity
-import android.net.Uri
 import android.os.Bundle
 import android.view.*
 import androidx.activity.result.contract.ActivityResultContracts
@@ -24,16 +22,16 @@ import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
+import dagger.hilt.android.AndroidEntryPoint
 import ru.netology.nmedia.model.PhotoModel
 
-
-
-
+@AndroidEntryPoint
 class NewPostFragment : Fragment() {
 
     companion object {
         var Bundle.textArg: String? by StringArg
     }
+
 
     private val viewModel: PostViewModel by activityViewModels()
 

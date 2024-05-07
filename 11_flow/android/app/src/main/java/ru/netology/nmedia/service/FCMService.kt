@@ -9,21 +9,25 @@ import android.content.pm.PackageManager
 import android.os.Build
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
-import androidx.core.content.ContextCompat.checkSelfPermission
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
 import com.google.gson.Gson
+import dagger.hilt.android.AndroidEntryPoint
 import ru.netology.nmedia.R
 import ru.netology.nmedia.auth.AppAuth
 import ru.netology.nmedia.dto.PushContent
+import javax.inject.Inject
 import kotlin.random.Random
 
-
+@AndroidEntryPoint
 class FCMService : FirebaseMessagingService() {
     private val action = "action"
     private val content = "content"
     private val channelId = "remote"
     private val gson = Gson()
+
+    @Inject
+    lateinit var appAuth: AppAuth
 
     override fun onCreate() {
         super.onCreate()
@@ -40,7 +44,7 @@ class FCMService : FirebaseMessagingService() {
     }
 
     override fun onMessageReceived(message: RemoteMessage) {
-        val valueIdLocal = AppAuth.getInstance().authState.value.id
+        val valueIdLocal = appAuth.authState.value.id
         val valueIdServer = Gson().fromJson(message.data["content"], PushContent::class.java)
 
         if (valueIdLocal == valueIdServer.recipientId || valueIdServer.recipientId == null) {
@@ -59,7 +63,7 @@ class FCMService : FirebaseMessagingService() {
                 content
             )
             notify(notification)
-            AppAuth.getInstance().sendPushToken()
+            appAuth.sendPushToken()
         }else {
             val notification = createNotification(
                 this,
@@ -67,7 +71,7 @@ class FCMService : FirebaseMessagingService() {
                 content
             )
             notify(notification)
-            AppAuth.getInstance().sendPushToken()
+            appAuth.sendPushToken()
         }
 
         }
@@ -83,7 +87,7 @@ private fun createNotification(context: Context, title: String, content: String)
 }
 
     override fun onNewToken(token: String) {
-        AppAuth.getInstance().sendPushToken(token)
+       appAuth.sendPushToken(token)
     }
 
     private fun handleLike(content: Like) {
