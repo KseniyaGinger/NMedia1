@@ -35,6 +35,7 @@ class NewPostFragment : Fragment() {
 
     private val viewModel: PostViewModel by activityViewModels()
 
+
     private var fragmentBinding: FragmentNewPostBinding? = null
 
     override fun onCreateView(
