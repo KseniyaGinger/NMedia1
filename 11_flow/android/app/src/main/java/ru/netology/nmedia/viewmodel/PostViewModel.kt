@@ -1,11 +1,16 @@
 package ru.netology.nmedia.viewmodel
 
 import androidx.lifecycle.*
+import androidx.paging.PagingData
+import androidx.paging.filter
+import androidx.paging.map
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import ru.netology.nmedia.auth.AppAuth
@@ -37,29 +42,28 @@ class PostViewModel @Inject constructor (
    appAuth: AppAuth,
 ) : ViewModel() {
 
+    private var maxId = 0L
+
 
     @OptIn(ExperimentalCoroutinesApi::class)
-    val data: LiveData<FeedModel> = appAuth
+    val data: Flow<PagingData<Post>> = appAuth
         .authState
-        .flatMapLatest { auth ->
+        .flatMapLatest { (auth, _) ->
+            maxId = 0
             repository.data.map{posts ->
-                FeedModel(
-                    posts.map {it.copy(ownedByMe = auth.id == it.authorId)},
-                    posts.isEmpty()
-                )
+                    posts.map {
+                        maxId = maxOf(maxId, it.id)
+                        it.copy(ownedByMe = it.authorId == auth)}
+                        .filter { !it.hidden }
             }
         }
-        .asLiveData(Dispatchers.Default)
+        .flowOn(Dispatchers.Default)
 
 
-    val newerCount = repository.data.asLiveData()
-        .switchMap {
-            repository.getNewerCount(it.firstOrNull()?.id ?: 0L).catch {
-                _dataState.postValue(
-                    FeedModelState(error = true)
-                )
-            }.asLiveData(Dispatchers.Default, 100)
-        }
+
+
+    @OptIn(ExperimentalCoroutinesApi::class)
+   val newerCount = repository.getNewerCount(maxId)
 
     private val _dataState = MutableLiveData<FeedModelState>()
     val dataState: LiveData<FeedModelState>

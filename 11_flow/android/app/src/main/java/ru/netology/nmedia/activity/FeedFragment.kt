@@ -15,6 +15,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.paging.LoadState
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import ru.netology.nmedia.R
 import ru.netology.nmedia.activity.FragmentPicture.Companion.textArg
@@ -22,6 +23,7 @@ import ru.netology.nmedia.adapter.OnInteractionListener
 import ru.netology.nmedia.adapter.PostsAdapter
 import ru.netology.nmedia.databinding.FragmentFeedBinding
 import ru.netology.nmedia.dto.Post
+import ru.netology.nmedia.viewmodel.AuthViewModel
 import ru.netology.nmedia.viewmodel.PostViewModel
 
 @AndroidEntryPoint
@@ -30,7 +32,7 @@ class FeedFragment : Fragment() {
 
    private val viewModel: PostViewModel by activityViewModels()
 
-    private val authViewModel: PostViewModel by activityViewModels()
+    private val authViewModel: AuthViewModel by activityViewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -75,7 +77,7 @@ class FeedFragment : Fragment() {
 
          lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                authViewModel.data.collectLatest (adapter::submitData)
+                authViewModel.data.collectLatest { adapter.refresh() }
             }
         }
 
@@ -95,8 +97,9 @@ class FeedFragment : Fragment() {
             binding.swiperefresh.isRefreshing = state.refreshing
             if (state.error) {
                 Snackbar.make(binding.root, R.string.error_loading, Snackbar.LENGTH_LONG)
-                    .setAction(R.string.retry_loading) { viewModel.loadPosts() }
-                    .show()
+                    .setAction(R.string.retry_loading) {
+                        viewModel.loadPosts() }
+                .show()
             }
         }
 
@@ -104,7 +107,6 @@ class FeedFragment : Fragment() {
             adapter.submitList(state.posts)
             binding.emptyText.isVisible = state.empty
         }
-
 
         viewModel.newerCount.observe(viewLifecycleOwner) {state ->
             val count = state as? Int ?: 0
