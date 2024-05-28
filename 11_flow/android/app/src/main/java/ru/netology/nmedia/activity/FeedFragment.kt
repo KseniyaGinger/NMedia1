@@ -103,21 +103,26 @@ class FeedFragment : Fragment() {
             }
         }
 
-        viewModel.data.observe(viewLifecycleOwner) { state ->
-            adapter.submitList(state.posts)
-            binding.emptyText.isVisible = state.empty
-        }
-
-        viewModel.newerCount.observe(viewLifecycleOwner) {state ->
-            val count = state as? Int ?: 0
-            if (count > 0) {
-                binding.plashka.visibility = View.VISIBLE
-                binding.plashka.text =
-                    getString(R.string.new_posts) + " " + "(" + state.toString() + ")"
-            } else {
-                binding.plashka.visibility = View.GONE
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewModel.data.collectLatest {
+                adapter.submitData(it)
             }
         }
+
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewModel.newerCount.collectLatest {state ->
+                val count = state as? Int ?: 0
+                if (count > 0) {
+                    binding.plashka.visibility = View.VISIBLE
+                    binding.plashka.text =
+                        getString(R.string.new_posts) + " " + "(" + state.toString() + ")"
+                } else {
+                    binding.plashka.visibility = View.GONE
+                }
+            }
+        }
+
 
         binding.swiperefresh.setOnRefreshListener {
             viewModel.refreshPosts()
